@@ -169,6 +169,7 @@
     <Content Include="BlogImport.ascx" />
     <Content Include="BlogEdit.ascx" />
     <Content Include="Controls\Comments.ascx" />
+    <Content Include="Controls\labelcontrol.ascx" />
     <Content Include="Controls\ManagementPanel.ascx" />
     <Content Include="Admin.ascx" />
     <Content Include="Controls\TemplateSettings.ascx" />

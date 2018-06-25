@@ -5,7 +5,7 @@
 <div class="dnnForm dnnBlogEdit dnnClear" id="dnnBlogEdit">
  <div id="ebContent">
   <h2 id="dnnSitePanel-Options" class="dnnFormSectionHead">
-   <%=LocalizeString("lblOptions")%></h2>
+  <%-- <%=LocalizeString("lblOptions")%></h2>--%>
   <fieldset>
    <div class="dnnFormItem">
     <dnn:Label ID="lblTitle" runat="server" controlname="txtTitle" suffix=":" />
@@ -37,7 +37,7 @@
    </div>
   </fieldset>
   <h2 id="dnnSitePanel-CommentOptions" class="dnnFormSectionHead">
-   <%=LocalizeString("lblCommentOptions")%></h2>
+  <%-- <%=LocalizeString("lblCommentOptions")%></h2>--%>
   <fieldset>
    <div class="dnnFormItem">
     <dnn:Label ID="lblSyndicate" runat="server" controlname="chkSyndicate" suffix=":" />
@@ -61,15 +61,15 @@
    </div>
    <div class="dnnFormItem">
     <dnn:Label ID="lblPingbacks" runat="server" controlname="chkEnablePingBackSend" suffix=":" />
-    <asp:CheckBox ID="chkEnablePingBackSend" runat="server" /><%=LocalizeString("Send")%><asp:CheckBox ID="chkEnablePingBackReceive" runat="server" /><%=LocalizeString("Receive")%><asp:CheckBox ID="chkAutoApprovePingBack" runat="server" /><%=LocalizeString("AutoApprove")%>
+    <asp:CheckBox ID="chkEnablePingBackSend" runat="server" /><%=""%><asp:CheckBox ID="chkEnablePingBackReceive" runat="server" /><%=""%><asp:CheckBox ID="chkAutoApprovePingBack" runat="server" /><%=""%>
    </div>
    <div class="dnnFormItem">
     <dnn:Label ID="lblTrackbacks" runat="server" controlname="chkEnableTrackBackSend" suffix=":" />
-    <asp:CheckBox ID="chkEnableTrackBackSend" runat="server" /><%=LocalizeString("Send")%><asp:CheckBox ID="chkEnableTrackBackReceive" runat="server" /><%=LocalizeString("Receive")%><asp:CheckBox ID="chkAutoApproveTrackBack" runat="server" /><%=LocalizeString("AutoApprove")%>
+    <asp:CheckBox ID="chkEnableTrackBackSend" runat="server" /><%=""%><asp:CheckBox ID="chkEnableTrackBackReceive" runat="server" /><%=""%><asp:CheckBox ID="chkAutoApproveTrackBack" runat="server" /><%=""%>
    </div>
   </fieldset>
   <h2 id="dnnSitePanel-GhostOptions" class="dnnFormSectionHead">
-   <%=LocalizeString("lblGhostOptions")%></h2>
+   <%--<%=LocalizeString("lblGhostOptions")%></h2>--%>
   <fieldset>
    <div class="dnnFormItem">
     <dnn:Label ID="lblMustApproveGhostPosts" runat="server" controlname="chkMustApproveGhostPosts" suffix=":" />
@@ -100,14 +100,7 @@
 <script language="javascript" type="text/javascript">
  /*globals jQuery, window, Sys */
  (function ($, Sys) {
-  function setupDnnBlogSettings() {
-   $('.dnnBlogDelete').dnnConfirm({
-    text: '<%= LocalizeJSString("msgDeleteBlog") %>',
-    yesText: '<%= LocalizeJSString("Yes.Text", Localization.SharedResourceFile) %>',
-    noText: '<%= LocalizeJSString("No.Text", Localization.SharedResourceFile) %>',
-    title: '<%= LocalizeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
-   });
-  };
+S
 
   $(document).ready(function () {
    setupDnnBlogSettings();

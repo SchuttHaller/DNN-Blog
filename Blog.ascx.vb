@@ -371,22 +371,31 @@ Public Class Blog
    Case "categories"
 
     If callingObject IsNot Nothing AndAlso TypeOf callingObject Is PostInfo Then
-     For Each t As TermInfo In CType(callingObject, PostInfo).PostCategories
-      Replacers.Add(New BlogTokenReplace(Me, BlogContext.Post, t))
-     Next
-    ElseIf BlogContext.Post IsNot Nothing Then
+                    For Each t As TermInfo In CType(callingObject, PostInfo).PostCategories
+                        If BlogContext.ParentModule IsNot Nothing Then
+                            t.ParentTabID = BlogContext.ParentModule.TabID
+                        End If
+                        Replacers.Add(New BlogTokenReplace(Me, BlogContext.Post, t))
+                    Next
+                ElseIf BlogContext.Post IsNot Nothing Then
      For Each t As TermInfo In BlogContext.Post.PostCategories
       Replacers.Add(New BlogTokenReplace(Me, BlogContext.Post, t))
      Next
     ElseIf ViewSettings.Categories = "" Then
-     For Each t As TermInfo In TermsController.GetTermsByModule(BlogContext.BlogModuleId, BlogContext.Locale).Where(Function(x) x.VocabularyId <> 1).ToList
-      Replacers.Add(New BlogTokenReplace(Me, Nothing, t))
-     Next
-    Else
-     For Each t As TermInfo In TermsController.GetTermsByModule(BlogContext.BlogModuleId, BlogContext.Locale).Where(Function(x) ViewSettings.CategoryList.Contains(x.VocabularyId)).ToList
-      Replacers.Add(New BlogTokenReplace(Me, Nothing, t))
-     Next
-    End If
+                    For Each t As TermInfo In TermsController.GetTermsByModule(BlogContext.BlogModuleId, BlogContext.Locale).Where(Function(x) x.VocabularyId <> 1).ToList
+                        If BlogContext.ParentModule IsNot Nothing Then
+                            t.ParentTabID = BlogContext.ParentModule.TabID
+                        End If
+                        Replacers.Add(New BlogTokenReplace(Me, Nothing, t))
+                    Next
+                Else
+                    For Each t As TermInfo In TermsController.GetTermsByModule(BlogContext.BlogModuleId, BlogContext.Locale).Where(Function(x) ViewSettings.CategoryList.Contains(x.VocabularyId)).ToList
+                        If BlogContext.ParentModule IsNot Nothing Then
+                            t.ParentTabID = BlogContext.ParentModule.TabID
+                        End If
+                        Replacers.Add(New BlogTokenReplace(Me, Nothing, t))
+                    Next
+                End If
     _usePaging = False
 
    Case "allcategories"

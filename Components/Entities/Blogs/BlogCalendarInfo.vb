@@ -22,6 +22,7 @@ Imports System.Runtime.Serialization
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Services.Tokens
+Imports DotNetNuke.Services.Localization
 
 Namespace Entities.Blogs
  Public Class BlogCalendarInfo
@@ -150,10 +151,12 @@ Namespace Entities.Blogs
 
   Public Function PermaLink(strParentTabID As Integer) As String
    Dim oTabController As DotNetNuke.Entities.Tabs.TabController = New DotNetNuke.Entities.Tabs.TabController
-   Dim oParentTab As DotNetNuke.Entities.Tabs.TabInfo = oTabController.GetTab(strParentTabID, DotNetNuke.Entities.Portals.PortalSettings.Current.PortalId, False)
-   _permaLink = String.Empty
-   Return PermaLink(oParentTab)
-  End Function
+            Dim oParentTab As DotNetNuke.Entities.Tabs.TabInfo = oTabController.GetTab(strParentTabID, DotNetNuke.Entities.Portals.PortalSettings.Current.PortalId, False)
+            Dim lang As String = New Localization().CurrentCulture
+            Dim lParentTab As DotNetNuke.Entities.Tabs.TabInfo = oTabController.GetTabByCulture(strParentTabID, DotNetNuke.Entities.Portals.PortalSettings.Current.PortalId, LocaleController.Instance.GetLocale(lang))
+            _permaLink = String.Empty
+            Return If(oParentTab.TabID = lParentTab.TabID, PermaLink(oParentTab), PermaLink(lParentTab))
+        End Function
 
   Public Function PermaLink(portalSettings As DotNetNuke.Entities.Portals.PortalSettings) As String
    Return PermaLink(portalSettings.ActiveTab)

@@ -23,82 +23,97 @@ Imports DotNetNuke.Common.Globals
 Imports DotNetNuke.Modules.Blog.Common.Globals
 Imports DotNetNuke.Modules.Blog.Entities.Blogs
 Imports DotNetNuke.Modules.Blog.Entities.Terms
+Imports DotNetNuke.ComponentModel
+Imports DotNetNuke.Services.Localization
+Imports DotNetNuke.Entities.Modules
 
 Namespace Entities.Posts
 
- Partial Public Class PostInfo
+    Partial Public Class PostInfo
 
-  Public ReadOnly Property PostCategories As List(Of TermInfo)
-   Get
-    Return Terms.Where(Function(t) t.VocabularyId <> 1).ToList
-   End Get
-  End Property
+        Public ReadOnly Property PostCategories As List(Of TermInfo)
+            Get
+                Return Terms.Where(Function(t) t.VocabularyId <> 1).ToList
+            End Get
+        End Property
 
-  Public ReadOnly Property PostTags As List(Of TermInfo)
-   Get
-    Return Terms.Where(Function(t) t.VocabularyId = 1).ToList
-   End Get
-  End Property
+        Public ReadOnly Property PostTags As List(Of TermInfo)
+            Get
+                Return Terms.Where(Function(t) t.VocabularyId = 1).ToList
+            End Get
+        End Property
 
-  Public Function PermaLink(strParentTabID As Integer) As String
-   Dim oTabController As DotNetNuke.Entities.Tabs.TabController = New DotNetNuke.Entities.Tabs.TabController
-   Dim oParentTab As DotNetNuke.Entities.Tabs.TabInfo = oTabController.GetTab(strParentTabID, DotNetNuke.Entities.Portals.PortalSettings.Current.PortalId, False)
-   _permaLink = String.Empty
-   Return PermaLink(oParentTab)
-  End Function
+        Public Function PermaLink(strParentTabID As Integer) As String
+            Dim oTabController As DotNetNuke.Entities.Tabs.TabController = New DotNetNuke.Entities.Tabs.TabController
+            Dim oParentTab As DotNetNuke.Entities.Tabs.TabInfo = oTabController.GetTab(strParentTabID, DotNetNuke.Entities.Portals.PortalSettings.Current.PortalId, False)
+            _permaLink = String.Empty
+            Return PermaLink(oParentTab)
+        End Function
 
-  Public Function PermaLink() As String
-   Return PermaLink(DotNetNuke.Entities.Portals.PortalSettings.Current.ActiveTab)
-  End Function
+        Public Function PermaLink() As String
+            Dim modu As ModuleInfo = New ModuleController().GetModule(Blog.ModuleID)
+            If modu Is Nothing Then
+                Return PermaLink(DotNetNuke.Entities.Portals.PortalSettings.Current.ActiveTab)
+            End If
+            Dim lang As String = New Localization().CurrentCulture
+            Dim locale As Locale = LocaleController.Instance.GetLocale(lang)
+            Return PermaLink(DotNetNuke.Entities.Tabs.TabController.Instance.GetTabByCulture(modu.TabID, modu.PortalID, locale))
+        End Function
 
-  Public Function PermaLink(portalSettings As DotNetNuke.Entities.Portals.PortalSettings) As String
-   Return PermaLink(portalSettings.ActiveTab)
-  End Function
+        Public Function PermaLink(portalSettings As DotNetNuke.Entities.Portals.PortalSettings) As String
+            Dim modu As ModuleInfo = New ModuleController().GetModule(Blog.ModuleID)
+            If modu Is Nothing Then
+                Return PermaLink(portalSettings.ActiveTab)
+            End If
+            Dim lang As String = New Localization().CurrentCulture
+            Dim locale As Locale = LocaleController.Instance.GetLocale(lang)
+            Return PermaLink(DotNetNuke.Entities.Tabs.TabController.Instance.GetTabByCulture(modu.TabID, modu.PortalID, locale))
+        End Function
 
-  Private _permaLink As String = ""
-  Public Function PermaLink(tab As DotNetNuke.Entities.Tabs.TabInfo) As String
-   If String.IsNullOrEmpty(_permaLink) Then
-    _permaLink = ApplicationURL(tab.TabID)
-    If Not String.IsNullOrEmpty(Locale) Then
-     _permaLink &= "&language=" & Locale
-    End If
-    _permaLink &= "&Post=" & ContentItemId.ToString
-    If DotNetNuke.Entities.Host.Host.UseFriendlyUrls Then
-     _permaLink = FriendlyUrl(tab, _permaLink, GetSafePageName(LocalizedTitle))
-    Else
-     _permaLink = ResolveUrl(_permaLink)
-    End If
-   End If
-   Return _permaLink
-  End Function
+        Private _permaLink As String = ""
+        Public Function PermaLink(tab As DotNetNuke.Entities.Tabs.TabInfo) As String
+            If String.IsNullOrEmpty(_permaLink) Then
+                _permaLink = ApplicationURL(tab.TabID)
+                If Not String.IsNullOrEmpty(Locale) Then
+                    _permaLink &= "&language=" & Locale
+                End If
+                _permaLink &= "&Post=" & ContentItemId.ToString
+                If DotNetNuke.Entities.Host.Host.UseFriendlyUrls Then
+                    _permaLink = FriendlyUrl(tab, _permaLink, GetSafePageName(LocalizedTitle))
+                Else
+                    _permaLink = ResolveUrl(_permaLink)
+                End If
+            End If
+            Return _permaLink
+        End Function
 
-  Private _terms As List(Of TermInfo)
-  Public Shadows Property Terms() As List(Of TermInfo)
-   Get
-    If _terms Is Nothing Then
-     _terms = TermsController.GetTermsByPost(ContentItemId, Blog.ModuleID, Threading.Thread.CurrentThread.CurrentCulture.Name)
-    End If
-    If _terms Is Nothing Then
-     _terms = New List(Of TermInfo)
-    End If
-    Return _terms
-   End Get
-   Set(ByVal value As List(Of TermInfo))
-    _terms = value
-   End Set
-  End Property
+        Private _terms As List(Of TermInfo)
+        Public Shadows Property Terms() As List(Of TermInfo)
+            Get
+                If _terms Is Nothing Then
+                    _terms = TermsController.GetTermsByPost(ContentItemId, Blog.ModuleID, Threading.Thread.CurrentThread.CurrentCulture.Name)
+                End If
+                If _terms Is Nothing Then
+                    _terms = New List(Of TermInfo)
+                End If
+                Return _terms
+            End Get
+            Set(ByVal value As List(Of TermInfo))
+                _terms = value
+            End Set
+        End Property
 
-  Private _blog As BlogInfo = Nothing
-  Public Property Blog() As BlogInfo
-   Get
-    If _blog Is Nothing Then
-     _blog = BlogsController.GetBlog(BlogID, -1, Threading.Thread.CurrentThread.CurrentCulture.Name)
-    End If
-    Return _blog
-   End Get
-   Set(ByVal value As BlogInfo)
-    _blog = value
-   End Set
-  End Property
- End Class
+        Private _blog As BlogInfo = Nothing
+        Public Property Blog() As BlogInfo
+            Get
+                If _blog Is Nothing Then
+                    _blog = BlogsController.GetBlog(BlogID, -1, Threading.Thread.CurrentThread.CurrentCulture.Name)
+                End If
+                Return _blog
+            End Get
+            Set(ByVal value As BlogInfo)
+                _blog = value
+            End Set
+        End Property
+    End Class
 End Namespace
