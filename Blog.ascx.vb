@@ -370,7 +370,7 @@ Public Class Blog
 
    Case "categories"
 
-    If callingObject IsNot Nothing AndAlso TypeOf callingObject Is PostInfo Then
+                If callingObject IsNot Nothing AndAlso TypeOf callingObject Is PostInfo Then
                     For Each t As TermInfo In CType(callingObject, PostInfo).PostCategories
                         If BlogContext.ParentModule IsNot Nothing Then
                             t.ParentTabID = BlogContext.ParentModule.TabID
@@ -378,10 +378,13 @@ Public Class Blog
                         Replacers.Add(New BlogTokenReplace(Me, BlogContext.Post, t))
                     Next
                 ElseIf BlogContext.Post IsNot Nothing Then
-     For Each t As TermInfo In BlogContext.Post.PostCategories
-      Replacers.Add(New BlogTokenReplace(Me, BlogContext.Post, t))
-     Next
-    ElseIf ViewSettings.Categories = "" Then
+                    For Each t As TermInfo In BlogContext.Post.PostCategories
+                        If BlogContext.ParentModule IsNot Nothing Then
+                            t.ParentTabID = BlogContext.ParentModule.TabID
+                        End If
+                        Replacers.Add(New BlogTokenReplace(Me, BlogContext.Post, t))
+                    Next
+                ElseIf ViewSettings.Categories = "" Then
                     For Each t As TermInfo In TermsController.GetTermsByModule(BlogContext.BlogModuleId, BlogContext.Locale).Where(Function(x) x.VocabularyId <> 1).ToList
                         If BlogContext.ParentModule IsNot Nothing Then
                             t.ParentTabID = BlogContext.ParentModule.TabID
